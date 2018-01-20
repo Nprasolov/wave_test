@@ -1,27 +1,27 @@
 package com.example.wave_first.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity
-public class Presentation {
-    @Basic
+@Entity(name = "PRESENTATION")
+public class Presentation implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private int id;
+    @Column(name = "ID")
+    private Long id;
 
-    @Column
+    @Column(name = "TITLE")
     private String title;
 
-    @Column
+    @Column(name = "THEME")
     private String theme;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -41,9 +41,27 @@ public class Presentation {
         this.theme = theme;
     }
 
-    public Presentation(int id, String title, String theme) {
-        this.id = id;
-        this.title = title;
-        this.theme = theme;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Presentation that = (Presentation) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Presentation{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", theme='" + theme + '\'' +
+                '}';
     }
 }
