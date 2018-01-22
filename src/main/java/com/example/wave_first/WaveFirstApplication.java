@@ -26,9 +26,16 @@ public class WaveFirstApplication implements CommandLineRunner{
     @Override
     public void run(String... strings) throws Exception {
         User user = new User();
-        user.setName("User");
-        user.setRole("Role");
+        user.setName("Ben");
+        user.setRole("Admin");
+        user.setPassword("Password");
         userRepo.save(user);
+
+        User user2 = new User();
+        user2.setName("Danila");
+        user2.setRole("Admin");
+        user2.setPassword("A");
+        userRepo.save(user2);
 
         Presentation pres= new Presentation();
         pres.setTitle("New IT tech");
@@ -46,6 +53,12 @@ public class WaveFirstApplication implements CommandLineRunner{
         for (Presentation item:presentations ) {
             System.out.println(item.toString());
        }
+        System.out.println("######################################");
+
+        Iterable <User> users=userRepo.findAll();
+        for (User item2:users ) {
+            System.out.println(item2.toString());
+        }
         //
     }
 }
