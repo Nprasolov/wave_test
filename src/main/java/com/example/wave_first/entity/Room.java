@@ -12,7 +12,7 @@ public class Room {
     private Long id;
 
     @Column(name = "NUMBER")
-    private String number;
+    private Long number;
 
     public Long getId() {
         return id;
@@ -22,11 +22,11 @@ public class Room {
         this.id = id;
     }
 
-    public String getNumber() {
+    public Long getNumber() {
         return number;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(Long number) {
         this.number = number;
     }
 

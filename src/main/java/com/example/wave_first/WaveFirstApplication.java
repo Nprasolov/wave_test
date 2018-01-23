@@ -1,9 +1,7 @@
 package com.example.wave_first;
 
-import com.example.wave_first.entity.Presentation;
-import com.example.wave_first.entity.User;
-import com.example.wave_first.repository.PresentationRepo;
-import com.example.wave_first.repository.UserRepo;
+import com.example.wave_first.entity.*;
+import com.example.wave_first.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +16,14 @@ public class WaveFirstApplication implements CommandLineRunner{
     private UserRepo userRepo;
     @Autowired
     private PresentationRepo presRepo;
+
+    @Autowired
+    private UsPrRepo usPrRepo;
+    @Autowired
+    private ScheduleRepo scheduleRepo;
+
+    @Autowired
+    private RoomRepo roomRepo;
 
     public static void main(String[] args) {
         SpringApplication.run(WaveFirstApplication.class, args);
@@ -46,6 +52,35 @@ public class WaveFirstApplication implements CommandLineRunner{
         pres2.setTitle("2018 and JS");
         pres2.setTheme("Internet of things");
         presRepo.save(pres2);
+
+        Room room1=new Room();
+        room1.setNumber((long) 314);
+        roomRepo.save(room1);
+
+        Room room2=new Room();
+        room2.setNumber((long) 212);
+        roomRepo.save(room2);
+
+        UserPresentation uspr1=new UserPresentation();
+        uspr1.setPresentation_id((long) 1);
+        uspr1.setUser_id((long) 1);
+        usPrRepo.save(uspr1);
+
+
+        UserPresentation uspr2=new UserPresentation();
+        uspr2.setPresentation_id((long) 1);
+        uspr2.setUser_id((long) 1);
+        usPrRepo.save(uspr2);
+
+        Schedule schedule1=new Schedule();
+        schedule1.setPresentation_id((long) 1);
+        schedule1.setRoom_id((long)1);
+        scheduleRepo.save(schedule1);
+
+        Schedule schedule2=new Schedule();
+        schedule2.setPresentation_id((long) 1);
+        schedule2.setRoom_id((long)1);
+        scheduleRepo.save(schedule2);
 
         System.out.println("######################################");
 
