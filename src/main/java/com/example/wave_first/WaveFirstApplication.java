@@ -8,6 +8,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @SpringBootApplication
 @EnableJpaRepositories
 public class WaveFirstApplication implements CommandLineRunner{
@@ -43,14 +46,19 @@ public class WaveFirstApplication implements CommandLineRunner{
         user2.setPassword("A");
         userRepo.save(user2);
 
+        Set<User> userSet=new HashSet<>();
+        userSet.add(user);
+        userSet.add(user2);
         Presentation pres= new Presentation();
         pres.setTitle("New IT tech");
         pres.setTheme("Internet of things");
+        //pres.setUserSet(userSet);
         presRepo.save(pres);
 
         Presentation pres2= new Presentation();
         pres2.setTitle("2018 and JS");
         pres2.setTheme("Internet of things");
+        //pres2.setUserSet(userSet);
         presRepo.save(pres2);
 
         Room room1=new Room();
@@ -69,8 +77,14 @@ public class WaveFirstApplication implements CommandLineRunner{
 
         UserPresentation uspr2=new UserPresentation();
         uspr2.setPresentation_id((long) 1);
-        uspr2.setUser_id((long) 1);
+        uspr2.setUser_id((long) 2);
         usPrRepo.save(uspr2);
+
+
+        UserPresentation uspr3=new UserPresentation();
+        uspr3.setPresentation_id((long) 2);
+        uspr3.setUser_id((long) 2);
+        usPrRepo.save(uspr3);
 
         Schedule schedule1=new Schedule();
         schedule1.setPresentation_id((long) 1);

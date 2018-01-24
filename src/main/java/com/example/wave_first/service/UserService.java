@@ -34,4 +34,5 @@ public class UserService implements UserDetailsService {
                 .User(user.getName(), user.getPassword(), true, true, true, true, auth);
     }
 
+
 }

@@ -2,14 +2,15 @@ package com.example.wave_first.controller;
 
 import com.example.wave_first.entity.*;
 import com.example.wave_first.repository.*;
+import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -28,9 +29,9 @@ public class MainController {
     private UsPrRepo usPrRepo;
 
     @RequestMapping("/users")
-    public ResponseEntity<Collection> showUsers(){
+    public ResponseEntity<Collection> showUsers() {
         Collection<User> users = new HashSet<>();
-        for(User user:userRepo.findAll()){
+        for (User user : userRepo.findAll()) {
             users.add(user);
         }
 
@@ -38,44 +39,48 @@ public class MainController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteUser(@RequestBody User user){
+    public ResponseEntity<Object> deleteUser(@RequestBody User user) {
         userRepo.delete(user);
-        return new ResponseEntity<Object>(userRepo.findAll(),HttpStatus.OK);
+        return new ResponseEntity<Object>(userRepo.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ResponseEntity<Object> updateUser(@RequestBody User user){
-        User needle_user=userRepo.findUserByName(user.getName());
+    public ResponseEntity<Object> updateUser(@RequestBody User user) {
+        User needle_user = userRepo.findUserByName(user.getName());
         needle_user.setRole(user.getRole());
         needle_user.setPassword(user.getPassword());
         userRepo.save(needle_user);
-        return new ResponseEntity<Object>(userRepo.findAll(),HttpStatus.OK);
+        return new ResponseEntity<Object>(userRepo.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public ResponseEntity<Object> registerUser(User user){
-        if(userRepo.findUserByName(user.getName())!=null){
-            return new ResponseEntity<Object>(userRepo.findUserByName(user.getName()),HttpStatus.ALREADY_REPORTED);
-        }
-        else{
-            User newuser=new User();
+    public ResponseEntity<Object> registerUser(User user) {
+        if (userRepo.findUserByName(user.getName()) != null) {
+            return new ResponseEntity<Object>(userRepo.findUserByName(user.getName()), HttpStatus.ALREADY_REPORTED);
+        } else {
+            User newuser = new User();
             newuser.setName(user.getName());
             newuser.setPassword(user.getPassword());
             newuser.setRole(user.getRole());
             userRepo.save(newuser);
-        return new ResponseEntity<Object>(userRepo.findUserByName(user.getName()),HttpStatus.OK);}
+            return new ResponseEntity<Object>(userRepo.findUserByName(user.getName()), HttpStatus.OK);
+        }
     }
 
     @RequestMapping("/schedule")
-    public ResponseEntity<Collection> showSchedule(){
-        Collection<ScheduleRest> scheduleRests=new HashSet<>();
-        for(Schedule schedule: scheduleRepo.findAll()){
+    public ResponseEntity<Collection> showSchedule() {
+        Collection<ScheduleRest> scheduleRests = new HashSet<>();
+        for (Schedule schedule : scheduleRepo.findAll()) {
 
-            ScheduleRest tmp_schedule=new ScheduleRest();
-            Presentation tmp_presentation=presentationRepo.findOne(schedule.getPresentation_id());
-            Room tmp_room=roomRepo.findOne(schedule.getRoom_id());
-
-
+            ScheduleRest tmp_schedule = new ScheduleRest();
+            Presentation tmp_presentation = presentationRepo.findOne(schedule.getPresentation_id());
+            Room tmp_room = roomRepo.findOne(schedule.getRoom_id());
+            String speakers="";
+            for(UserPresentation userPresentation: usPrRepo.findUserPresentationByPresentationId(schedule.getPresentation_id())){
+                User tmp_user=userRepo.findOne(userPresentation.getUser_id());
+                speakers+=tmp_user.getName()+", ";
+            }
+            tmp_schedule.setUsers(speakers);
             tmp_schedule.setPresTitle(tmp_presentation.getTitle());
             tmp_schedule.setPresTheme(tmp_presentation.getTheme());
             tmp_schedule.setStartTime(schedule.getStart_time());
@@ -84,6 +89,35 @@ public class MainController {
 
             scheduleRests.add(tmp_schedule);
         }
-        return new ResponseEntity<Collection>(scheduleRests,HttpStatus.OK);
+        return new ResponseEntity<Collection>(scheduleRests, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
+    public ResponseEntity<Collection> showOwnPres() {
+
+        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser=userRepo.findUserByName(user.getUsername());
+        Collection<UserPresentation> userPresentations = new HashSet<>();
+        for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
+            userPresentations.add(uspr);
+        }
+        return new ResponseEntity<Collection>(userPresentations, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/ownpres", method = RequestMethod.DELETE)
+    public ResponseEntity<java.lang.Object> deleteOwnPres(@RequestBody Presentation presentation)  {
+        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser=userRepo.findUserByName(user.getUsername());
+        //удаляет себя из авторов презентации
+        for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
+            if(uspr.getUser_id()==currentUser.getId()&&uspr.getPresentation_id()==presentation.getId()){
+                usPrRepo.delete(uspr);
+            }
+        }
+        //если был последним автором то удаляем саму прзентацию
+        if(usPrRepo.findUserPresentationByPresentationId(presentation.getId())==null){
+            presentationRepo.delete(presentation.getId());
+        }
+        return new ResponseEntity<Object>(presentation,HttpStatus.OK);
     }
 }

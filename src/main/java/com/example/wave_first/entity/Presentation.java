@@ -2,6 +2,7 @@ package com.example.wave_first.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity(name = "PRESENTATION")
 public class Presentation implements Serializable {
@@ -16,6 +17,18 @@ public class Presentation implements Serializable {
 
     @Column(name = "THEME")
     private String theme;
+
+    /*@Column(name="USERSET")
+    @OneToMany(mappedBy = "presentation")
+    private Set<User> userSet;
+
+    public Set<User> getUserSet() {
+        return userSet;
+    }
+
+    public void setUserSet(Set<User> userSet) {
+        this.userSet = userSet;
+    }*/
 
     public Long getId() {
         return id;

@@ -7,7 +7,7 @@ public class ScheduleRest {
     private String presTitle;
     private String presTheme;
     private Long roomName;
-    private Set<String> users;
+    private String users;
     private Date startTime;
     private Date endTime;
 
@@ -35,11 +35,11 @@ public class ScheduleRest {
         this.roomName = roomName;
     }
 
-    public Set<String> getUsers() {
+    public String getUsers() {
         return users;
     }
 
-    public void setUsers(Set<String> users) {
+    public void setUsers(String users) {
         this.users = users;
     }
 

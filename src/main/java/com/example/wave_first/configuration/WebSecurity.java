@@ -23,6 +23,7 @@ public class WebSecurity  extends WebSecurityConfigurerAdapter{
                 .authorizeRequests()
                 .antMatchers("/", "/home","/signup","/schedule").permitAll()
                 .antMatchers("/users").hasAuthority("Admin")
+                .antMatchers("/ownpres").hasAuthority("Presenter")
                 .anyRequest().authenticated();
         http
                 .formLogin()
@@ -38,20 +39,6 @@ public class WebSecurity  extends WebSecurityConfigurerAdapter{
         auth
                 .userDetailsService(userDetailsService);
     }
-    /*@Configuration
-    protected static class AuthenticationConfiguration extends
-            GlobalAuthenticationConfigurerAdapter {
-
-        @Override
-        public void init(AuthenticationManagerBuilder auth) throws Exception {
-           /* auth
-                    .inMemoryAuthentication()
-                    .withUser("user").password("password").roles("USER");
-           auth
-                   .userDetailsService(userDetailsService);
-        }
-
-    }*/
 
 
 

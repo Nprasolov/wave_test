@@ -12,10 +12,10 @@ public class UserPresentation {
     private Long id;
 
     @Column(name = "USER_ID")
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "PRESENTATION_ID")
-    private Long presentation_id;
+    private Long presentationId;
 
     public Long getId() {
         return id;
@@ -26,19 +26,19 @@ public class UserPresentation {
     }
 
     public Long getUser_id() {
-        return user_id;
+        return userId;
     }
 
     public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+        this.userId = user_id;
     }
 
     public Long getPresentation_id() {
-        return presentation_id;
+        return presentationId;
     }
 
     public void setPresentation_id(Long presentation_id) {
-        this.presentation_id = presentation_id;
+        this.presentationId = presentation_id;
     }
 
     @Override
@@ -47,22 +47,22 @@ public class UserPresentation {
         if (o == null || getClass() != o.getClass()) return false;
         UserPresentation that = (UserPresentation) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(user_id, that.user_id) &&
-                Objects.equals(presentation_id, that.presentation_id);
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(presentationId, that.presentationId);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, user_id, presentation_id);
+        return Objects.hash(id, userId, presentationId);
     }
 
     @Override
     public String toString() {
         return "UserPresentation{" +
                 "id=" + id +
-                ", user_id=" + user_id +
-                ", presentation_id=" + presentation_id +
+                ", user_id=" + userId +
+                ", presentation_id=" + presentationId +
                 '}';
     }
 }

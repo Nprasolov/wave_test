@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UsPrRepo extends CrudRepository<UserPresentation,Long> {
+    Iterable<UserPresentation> findUserPresentationByUserId(long user_id);
+    Iterable<UserPresentation> findUserPresentationByPresentationId(long presentation_id);
 }
