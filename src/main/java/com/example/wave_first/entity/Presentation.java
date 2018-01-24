@@ -30,6 +30,11 @@ public class Presentation implements Serializable {
         this.userSet = userSet;
     }*/
 
+    public Presentation(String title, String theme) {
+        this.title = title;
+        this.theme = theme;
+    }
+
     public Long getId() {
         return id;
     }

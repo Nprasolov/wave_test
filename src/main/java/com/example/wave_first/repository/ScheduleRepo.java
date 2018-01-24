@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ScheduleRepo extends CrudRepository<Schedule,Long>{
-
+    Iterable<Schedule> findScheduleByRoomId(long room_id);
 }

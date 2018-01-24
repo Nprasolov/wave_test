@@ -2,7 +2,6 @@ package com.example.wave_first.controller;
 
 import com.example.wave_first.entity.*;
 import com.example.wave_first.repository.*;
-import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 
 @RestController
 public class MainController {
@@ -75,10 +77,10 @@ public class MainController {
             ScheduleRest tmp_schedule = new ScheduleRest();
             Presentation tmp_presentation = presentationRepo.findOne(schedule.getPresentation_id());
             Room tmp_room = roomRepo.findOne(schedule.getRoom_id());
-            String speakers="";
-            for(UserPresentation userPresentation: usPrRepo.findUserPresentationByPresentationId(schedule.getPresentation_id())){
-                User tmp_user=userRepo.findOne(userPresentation.getUser_id());
-                speakers+=tmp_user.getName()+", ";
+            String speakers = "";
+            for (UserPresentation userPresentation : usPrRepo.findUserPresentationByPresentationId(schedule.getPresentation_id())) {
+                User tmp_user = userRepo.findOne(userPresentation.getUser_id());
+                speakers += tmp_user.getName() + ", ";
             }
             tmp_schedule.setUsers(speakers);
             tmp_schedule.setPresTitle(tmp_presentation.getTitle());
@@ -96,7 +98,7 @@ public class MainController {
     public ResponseEntity<Collection> showOwnPres() {
 
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User currentUser=userRepo.findUserByName(user.getUsername());
+        User currentUser = userRepo.findUserByName(user.getUsername());
         Collection<UserPresentation> userPresentations = new HashSet<>();
         for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
             userPresentations.add(uspr);
@@ -105,19 +107,65 @@ public class MainController {
     }
 
     @RequestMapping(value = "/ownpres", method = RequestMethod.DELETE)
-    public ResponseEntity<java.lang.Object> deleteOwnPres(@RequestBody Presentation presentation)  {
+    public ResponseEntity<Object> deleteOwnPres(@RequestBody Presentation presentation) {
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User currentUser=userRepo.findUserByName(user.getUsername());
+        User currentUser = userRepo.findUserByName(user.getUsername());
+        if (usPrRepo.findUserPresentationByPresentationId(presentation.getId()) == null) {
+            return new ResponseEntity<>(presentation, HttpStatus.NOT_FOUND);
+        }
         //удаляет себя из авторов презентации
         for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
-            if(uspr.getUser_id()==currentUser.getId()&&uspr.getPresentation_id()==presentation.getId()){
+            if (uspr.getUser_id() == currentUser.getId() && uspr.getPresentation_id() == presentation.getId()) {
                 usPrRepo.delete(uspr);
             }
         }
         //если был последним автором то удаляем саму прзентацию
-        if(usPrRepo.findUserPresentationByPresentationId(presentation.getId())==null){
+        if (usPrRepo.findUserPresentationByPresentationId(presentation.getId()) == null) {
             presentationRepo.delete(presentation.getId());
         }
-        return new ResponseEntity<Object>(presentation,HttpStatus.OK);
+        return new ResponseEntity<Object>(presentation, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "new_pres", method = RequestMethod.POST)
+    public ResponseEntity<Object> addNewPresentation(@RequestBody ScheduleRest scheduleRest) {
+        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userRepo.findUserByName(user.getUsername());
+
+        Presentation presentation = new Presentation(scheduleRest.getPresTitle(), scheduleRest.getPresTheme());
+
+        UserPresentation userPresentation = new UserPresentation(currentUser.getId(), presentation.getId());
+
+        Room room = roomRepo.findRoomByName(scheduleRest.getRoomName());
+        Schedule schedule = new Schedule();
+        //добавить можно презентацию либо до либо после всех презентаций в этой аудитории
+
+        for (Schedule schedule1 : scheduleRepo.findScheduleByRoomId(room.getId()))
+            if (
+                    (scheduleRest.getStartTime().before(schedule1.getStart_time())
+                            && scheduleRest.getStartTime().before(schedule1.getEnd_time())
+                    )
+                            ||
+                            (scheduleRest.getStartTime().after(schedule1.getStart_time())
+                                    && scheduleRest.getStartTime().after(schedule1.getEnd_time())
+                            )
+                    )
+
+            {
+
+            }
+            //если нашлась хоть одна не удовлетворяющая условиям
+            else {
+
+                return new ResponseEntity<>(schedule, HttpStatus.BAD_REQUEST);
+
+            }
+        schedule.setRoom_id(room.getId());
+        schedule.setPresentation_id(presentation.getId());
+        schedule.setStart_time(scheduleRest.getStartTime());
+        schedule.setEnd_time(scheduleRest.getEndTime());
+        scheduleRepo.save(schedule);
+        presentationRepo.save(presentation);
+        usPrRepo.save(userPresentation);
+        return new ResponseEntity<Object>(schedule, HttpStatus.OK);
     }
 }

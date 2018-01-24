@@ -16,7 +16,7 @@ public class Schedule {
     private Long presentation_id;
 
     @Column(name="ROOM_ID")
-    private Long room_id;
+    private Long roomId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="START_TIME")
@@ -43,11 +43,11 @@ public class Schedule {
     }
 
     public Long getRoom_id() {
-        return room_id;
+        return roomId;
     }
 
     public void setRoom_id(Long room_id) {
-        this.room_id = room_id;
+        this.roomId = room_id;
     }
 
     public Date getStart_time() {
@@ -88,7 +88,7 @@ public class Schedule {
         return "Schedule{" +
                 "id=" + id +
                 ", presentation_id=" + presentation_id +
-                ", room_id=" + room_id +
+                ", room_id=" + roomId +
                 ", start_time=" + start_time +
                 ", end_time=" + end_time +
                 '}';
