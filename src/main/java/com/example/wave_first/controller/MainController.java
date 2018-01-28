@@ -123,7 +123,7 @@ public class MainController {
         if (usPrRepo.findUserPresentationByPresentationId(presentation.getId()) == null) {
             presentationRepo.delete(presentation.getId());
         }
-        return new ResponseEntity<Object>(presentation, HttpStatus.OK);
+        return new ResponseEntity<>(presentation, HttpStatus.OK);
     }
 
     @RequestMapping(value = "new_pres", method = RequestMethod.POST)
@@ -140,7 +140,7 @@ public class MainController {
         //добавить можно презентацию либо до либо после всех презентаций в этой аудитории
 
         for (Schedule schedule1 : scheduleRepo.findScheduleByRoomId(room.getId()))
-            if (
+            if(
                     (scheduleRest.getStartTime().before(schedule1.getStart_time())
                             && scheduleRest.getStartTime().before(schedule1.getEnd_time())
                     )
@@ -166,6 +166,6 @@ public class MainController {
         scheduleRepo.save(schedule);
         presentationRepo.save(presentation);
         usPrRepo.save(userPresentation);
-        return new ResponseEntity<Object>(schedule, HttpStatus.OK);
+        return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 }

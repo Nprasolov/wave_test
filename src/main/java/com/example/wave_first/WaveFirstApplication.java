@@ -49,15 +49,10 @@ public class WaveFirstApplication implements CommandLineRunner{
         Set<User> userSet=new HashSet<>();
         userSet.add(user);
         userSet.add(user2);
-        Presentation pres= new Presentation();
-        pres.setTitle("New IT tech");
-        pres.setTheme("Internet of things");
-        //pres.setUserSet(userSet);
+        Presentation pres= new Presentation("New IT tech","Internet of things");
         presRepo.save(pres);
 
-        Presentation pres2= new Presentation();
-        pres2.setTitle("2018 and JS");
-        pres2.setTheme("Internet of things");
+        Presentation pres2= new Presentation("2018 and JS","Internet of things");
         //pres2.setUserSet(userSet);
         presRepo.save(pres2);
 
@@ -69,21 +64,13 @@ public class WaveFirstApplication implements CommandLineRunner{
         room2.setNumber((long) 212);
         roomRepo.save(room2);
 
-        UserPresentation uspr1=new UserPresentation();
-        uspr1.setPresentation_id((long) 1);
-        uspr1.setUser_id((long) 1);
+        UserPresentation uspr1=new UserPresentation((long) 1,(long) 1);
         usPrRepo.save(uspr1);
 
-
-        UserPresentation uspr2=new UserPresentation();
-        uspr2.setPresentation_id((long) 1);
-        uspr2.setUser_id((long) 2);
+        UserPresentation uspr2=new UserPresentation((long) 1,(long) 2);
         usPrRepo.save(uspr2);
 
-
-        UserPresentation uspr3=new UserPresentation();
-        uspr3.setPresentation_id((long) 2);
-        uspr3.setUser_id((long) 2);
+        UserPresentation uspr3=new UserPresentation((long) 2,(long) 2);
         usPrRepo.save(uspr3);
 
         Schedule schedule1=new Schedule();
