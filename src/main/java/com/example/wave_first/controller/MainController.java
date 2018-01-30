@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Date;
@@ -94,8 +92,8 @@ public class MainController {
         return new ResponseEntity<Collection>(scheduleRests, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
-    public ResponseEntity<Collection> showOwnPres() {
+  //  @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
+    /*public ResponseEntity<Collection> showOwnPres() {
 
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepo.findUserByName(user.getUsername());
@@ -104,6 +102,12 @@ public class MainController {
             userPresentations.add(uspr);
         }
         return new ResponseEntity<Collection>(userPresentations, HttpStatus.OK);
+    }*/
+
+    @RequestMapping("/greeting")
+    public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
+        model.addAttribute("name", name);
+        return "greeting";
     }
 
     @RequestMapping(value = "/ownpres", method = RequestMethod.DELETE)

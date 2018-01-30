@@ -52,4 +52,7 @@ public class Room {
 
         return Objects.hash(id, number);
     }
+
+    public Room() {
+    }
 }
