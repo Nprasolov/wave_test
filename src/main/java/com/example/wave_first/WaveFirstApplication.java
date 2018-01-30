@@ -42,7 +42,7 @@ public class WaveFirstApplication implements CommandLineRunner{
 
         User user2 = new User();
         user2.setName("Danila");
-        user2.setRole("Admin");
+        user2.setRole("Presenter");
         user2.setPassword("A");
         userRepo.save(user2);
 

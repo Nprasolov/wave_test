@@ -57,11 +57,13 @@ public class UserPresentation {
         return Objects.hash(id, userId, presentationId);
     }
 
+    public UserPresentation() {
+
+    }
     public UserPresentation(Long userId, Long presentationId) {
         this.userId = userId;
         this.presentationId = presentationId;
     }
-
     @Override
 
     public String toString() {

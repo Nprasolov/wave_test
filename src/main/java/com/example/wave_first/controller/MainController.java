@@ -126,8 +126,8 @@ public class MainController {
         return new ResponseEntity<>(presentation, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "new_pres", method = RequestMethod.POST)
-    public ResponseEntity<Object> addNewPresentation(@RequestBody ScheduleRest scheduleRest) {
+   // @RequestMapping(value = "new_pres", method = RequestMethod.POST)
+    /*public ResponseEntity<Object> addNewPresentation(@RequestBody ScheduleRest scheduleRest) {
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepo.findUserByName(user.getUsername());
 
@@ -135,7 +135,7 @@ public class MainController {
 
         UserPresentation userPresentation = new UserPresentation(currentUser.getId(), presentation.getId());
 
-        Room room = roomRepo.findRoomByName(scheduleRest.getRoomName());
+        Room room = roomRepo.findRoomByNumbr(scheduleRest.getRoomName());
         Schedule schedule = new Schedule();
         //добавить можно презентацию либо до либо после всех презентаций в этой аудитории
 
@@ -167,5 +167,5 @@ public class MainController {
         presentationRepo.save(presentation);
         usPrRepo.save(userPresentation);
         return new ResponseEntity<>(schedule, HttpStatus.OK);
-    }
+    }*/
 }

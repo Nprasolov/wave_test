@@ -1,11 +1,9 @@
 package com.example.wave_first.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Set;
 
 @Entity(name = "PRESENTATION")
-public class Presentation implements Serializable {
+public class Presentation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +27,10 @@ public class Presentation implements Serializable {
     public void setUserSet(Set<User> userSet) {
         this.userSet = userSet;
     }*/
+
+    public Presentation() {
+
+    }
 
     public Presentation(String title, String theme) {
         this.title = title;
