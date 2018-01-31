@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
 
@@ -89,37 +91,82 @@ public class MainController {
         return new ResponseEntity<Collection>(scheduleRests, HttpStatus.OK);
     }
 
-   /* @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
-    public ResponseEntity<Collection> showOwnPres() {
+    /* @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
+     public ResponseEntity<Collection> showOwnPres() {
+
+         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+         User currentUser = userRepo.findUserByName(user.getUsername());
+         Collection<UserPresentation> userPresentations = new HashSet<>();
+         for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
+             userPresentations.add(uspr);
+         }
+         return new ResponseEntity<Collection>(userPresentations, HttpStatus.OK);
+     }*/
+    @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
+    public Model showOwnPres(@RequestParam(value = "result", required = false, defaultValue = "0") String result, Model model) {
 
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepo.findUserByName(user.getUsername());
-        Collection<UserPresentation> userPresentations = new HashSet<>();
+        Collection<PresentationRest> userPresentationsRest = new HashSet<>();
+
         for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
-            userPresentations.add(uspr);
+
+            Presentation tmpPresentation = presentationRepo.findOne(uspr.getPresentation_id());
+            String authors = "";
+            for (UserPresentation uspr2 : usPrRepo.findUserPresentationByPresentationId(uspr.getPresentation_id())) {
+                User author = userRepo.findOne(uspr2.getUser_id());
+                authors += ", " + author.getName();
+            }
+
+            PresentationRest tmpUserPresentation = new PresentationRest();
+            tmpUserPresentation.setId(uspr.getId());
+            tmpUserPresentation.setPresentation_id(uspr.getPresentation_id());
+            tmpUserPresentation.setUser_id(uspr.getUser_id());
+            tmpUserPresentation.setPresentation_title(tmpPresentation.getTitle());
+            tmpUserPresentation.setUsername(authors);
+
+            userPresentationsRest.add(tmpUserPresentation);
         }
-        return new ResponseEntity<Collection>(userPresentations, HttpStatus.OK);
-    }*/
-   @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
-   public Model showOwnPres(Model model) {
-       org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       User currentUser = userRepo.findUserByName(user.getUsername());
-       Collection<UserPresentation> userPresentations = new HashSet<>();
+        model.addAttribute("presentation", userPresentationsRest);
+        model.addAttribute("result", result);
+        return model;
+    }
 
-       for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
-           userPresentations.add(uspr);
-       }
-       model.addAttribute("presentation",new HashSet<>(userPresentations));
-       return model;
-   }
+    @RequestMapping(value = "/deteleownpres", method = RequestMethod.GET)
+    public RedirectView deleteOwnPres(@RequestParam(value = "presentation_id", required = false, defaultValue = "-1") Long presentation_id, RedirectAttributes attributes) {
+        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userRepo.findUserByName(user.getUsername());
+        
+        int count=0;
+        Iterable<UserPresentation> tmpPres=usPrRepo.findUserPresentationByPresentationId(presentation_id);
+        for (UserPresentation uspr : tmpPres) {
+            count++;
+        }
+        if (count==0) {
+            attributes.addAttribute("result", "Ошибка удаления не найдена доступная презентация");
+            return new RedirectView("ownpres");
+        }
 
+        //удаляет себя из авторов презентации
+        for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
+            if (uspr.getUser_id() == currentUser.getId() && uspr.getPresentation_id() == presentation_id) {
+                usPrRepo.delete(uspr);
+            }
+        }
+        //если был последним автором то удаляем саму прзентацию
+        if (usPrRepo.findUserPresentationByPresentationId(presentation_id) == null) {
+            presentationRepo.delete(presentation_id);
+        }
+        attributes.addAttribute("result", "Корректно удален из авторов");
+        return new RedirectView("ownpres");
+    }
     /*@RequestMapping("/greeting")
     public Model greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
         return model;
     }*/
 
-    @RequestMapping(value = "/ownpres", method = RequestMethod.DELETE)
+   /* @RequestMapping(value = "/ownpres", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteOwnPres(@RequestBody Presentation presentation) {
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepo.findUserByName(user.getUsername());
@@ -137,9 +184,9 @@ public class MainController {
             presentationRepo.delete(presentation.getId());
         }
         return new ResponseEntity<>(presentation, HttpStatus.OK);
-    }
+    }*/
 
-   // @RequestMapping(value = "new_pres", method = RequestMethod.POST)
+    // @RequestMapping(value = "new_pres", method = RequestMethod.POST)
     /*public ResponseEntity<Object> addNewPresentation(@RequestBody ScheduleRest scheduleRest) {
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepo.findUserByName(user.getUsername());

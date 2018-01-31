@@ -5,11 +5,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<p th:text="${presentation}"/>
+<p  th:if="${result}">
+<p  th:text="${result}"></p>
+</p>
+<p>Список моих презентаций</p>
 <table class="table table-bordered">
-    <tr th:each="course : ${presentation}" th:object="${course}">
-        <td><span th:text="${course}"></span></td>
-        <td><span th:text="${course.id}"></span></td>
+    <thead>
+    <th>Номер презентации</th>
+    <th>Название Презентации</th>
+    <th>Все авторы презентации</th>
+    </thead>
+    <tr th:each="item : ${presentation}" th:object="${item}">
+        <td><span th:text="${item.id}"></span></td>
+        <td><span th:text="${item.presentation_title}"></span></td>
+        <td><span th:text="${item.username}"></span></td>
+        <td><a th:href="@{'/deteleownpres'(presentation_id=${item.presentation_id})}">Удалить меня из авторов</a></td>
     </tr>
 </table>
 </body>

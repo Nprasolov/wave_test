@@ -34,10 +34,12 @@ public class WaveFirstApplication implements CommandLineRunner{
 
     @Override
     public void run(String... strings) throws Exception {
+
+
         User user = new User();
         user.setName("Ben");
-        user.setRole("Admin");
-        user.setPassword("Password");
+        user.setRole("Presenter");
+        user.setPassword("B");
         userRepo.save(user);
 
         User user2 = new User();
@@ -45,6 +47,12 @@ public class WaveFirstApplication implements CommandLineRunner{
         user2.setRole("Presenter");
         user2.setPassword("A");
         userRepo.save(user2);
+
+        User admin = new User();
+        admin.setName("admin");
+        admin.setRole("Admin");
+        admin.setPassword("123456");
+        userRepo.save(admin);
 
         Set<User> userSet=new HashSet<>();
         userSet.add(user);
