@@ -9,10 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 public class MainController {
@@ -92,8 +89,8 @@ public class MainController {
         return new ResponseEntity<Collection>(scheduleRests, HttpStatus.OK);
     }
 
-  //  @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
-    /*public ResponseEntity<Collection> showOwnPres() {
+   /* @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
+    public ResponseEntity<Collection> showOwnPres() {
 
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepo.findUserByName(user.getUsername());
@@ -103,12 +100,24 @@ public class MainController {
         }
         return new ResponseEntity<Collection>(userPresentations, HttpStatus.OK);
     }*/
+   @RequestMapping(value = "/ownpres", method = RequestMethod.GET)
+   public Model showOwnPres(Model model) {
+       org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       User currentUser = userRepo.findUserByName(user.getUsername());
+       Collection<UserPresentation> userPresentations = new HashSet<>();
 
-    @RequestMapping("/greeting")
-    public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
+       for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(currentUser.getId())) {
+           userPresentations.add(uspr);
+       }
+       model.addAttribute("presentation",new HashSet<>(userPresentations));
+       return model;
+   }
+
+    /*@RequestMapping("/greeting")
+    public Model greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
-        return "greeting";
-    }
+        return model;
+    }*/
 
     @RequestMapping(value = "/ownpres", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteOwnPres(@RequestBody Presentation presentation) {
