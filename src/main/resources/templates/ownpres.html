@@ -25,9 +25,14 @@
         <td><span th:text="${item.id}"></span></td>
         <td><span th:text="${item.presentation_title}"></span></td>
         <td><span th:text="${item.username}"></span></td>
-        <td><a th:href="@{'/deteleownpres'(presentation_id=${item.presentation_id})}">Удалить меня из авторов</a></td>
+        <td>
+            <a th:href="@{'/deleteownpres'(presentation_id=${item.presentation_id})}">Удалить меня из авторов</a>
+            <a th:href="@{'/updatepresentation'(pres_id=${item.presentation_id})}">Отредактировать презентацию</a>
+        </td>
     </tr>
 </table>
+    <a href="/createpres"> <button type="button" class="btn btn-primary">Новая презентация</button></a>
+
 </div>
 </body>
 </html>
