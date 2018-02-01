@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Список пользователей</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+</head>
+<body>
+<div class="container">
+    <div th:switch="${result}" class="alert alert-primary">
+        <p th:case="0"></p>
+        <p th:case="*"><span th:text="${result}"></span></p>
+    </div>
+    <p>Список пользователей</p>
+    <table class="table table-striped">
+    <thead>
+    <th>Номер </th>
+    <th>Имя</th>
+    <th>Роль</th>
+    <th>Пароль</th>
+    <th>Действия</th>
+    </thead>
+    <tr th:each="item : ${users}" th:object="${item}">
+        <td><span th:text="${item.id}"></span></td>
+        <td><span th:text="${item.name}"></span></td>
+        <td><span th:text="${item.role}"></span></td>
+        <td><span th:text="${item.password}"></span></td>
+        <td><a th:href="@{'/deleteuser'(user_id=${item.id})}">Удалить пользователя</a><br/>
+        <a th:href="@{'/updateuser'(user_id=${item.id})}">Отредактировать пользователя </a></td>
+    </tr>
+</table>
+</div>
+</body>
+</html>

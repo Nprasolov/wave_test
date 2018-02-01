@@ -3,17 +3,23 @@
 <head>
     <title>Мои презентации</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
 </head>
 <body>
-<p  th:if="${result}">
-<p  th:text="${result}"></p>
-</p>
+<div class="container">
+<div th:switch="${result}" class="alert alert-primary">
+    <p th:case="0"></p>
+    <p th:case="*"><span th:text="${result}"></span></p>
+</div>
 <p>Список моих презентаций</p>
-<table class="table table-bordered">
+<table class="table table-striped">
     <thead>
+    <tr>
     <th>Номер презентации</th>
     <th>Название Презентации</th>
     <th>Все авторы презентации</th>
+    <th>Действие</th>
+    </tr>
     </thead>
     <tr th:each="item : ${presentation}" th:object="${item}">
         <td><span th:text="${item.id}"></span></td>
@@ -22,5 +28,6 @@
         <td><a th:href="@{'/deteleownpres'(presentation_id=${item.presentation_id})}">Удалить меня из авторов</a></td>
     </tr>
 </table>
+</div>
 </body>
 </html>

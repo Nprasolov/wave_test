@@ -13,7 +13,7 @@ public class Schedule {
     private Long id;
 
     @Column(name="PRESENTATION_ID")
-    private Long presentation_id;
+    private Long presentationId;
 
     @Column(name="ROOM_ID")
     private Long roomId;
@@ -35,11 +35,11 @@ public class Schedule {
     }
 
     public Long getPresentation_id() {
-        return presentation_id;
+        return presentationId;
     }
 
     public void setPresentation_id(Long presentation_id) {
-        this.presentation_id = presentation_id;
+        this.presentationId = presentation_id;
     }
 
     public Long getRoom_id() {
@@ -87,7 +87,7 @@ public class Schedule {
     public String toString() {
         return "Schedule{" +
                 "id=" + id +
-                ", presentation_id=" + presentation_id +
+                ", presentation_id=" + presentationId +
                 ", room_id=" + roomId +
                 ", start_time=" + start_time +
                 ", end_time=" + end_time +

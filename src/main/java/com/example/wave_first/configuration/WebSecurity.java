@@ -22,7 +22,7 @@ public class WebSecurity  extends WebSecurityConfigurerAdapter{
         http
                 .authorizeRequests()
                 .antMatchers("/", "/home","/signup","/schedule").permitAll()
-                .antMatchers("/users").hasAuthority("Admin")
+                .antMatchers("/users","/deleteuser").hasAuthority("Admin")
                 .antMatchers("/ownpres").hasAuthority("Presenter")
                 .anyRequest().authenticated();
         http

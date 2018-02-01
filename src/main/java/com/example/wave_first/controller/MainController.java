@@ -28,16 +28,61 @@ public class MainController {
     private UsPrRepo usPrRepo;
 
     @RequestMapping("/users")
-    public ResponseEntity<Collection> showUsers() {
+    public Model showUsers(Model model, @RequestParam(value = "result", required = false, defaultValue = "0") String result) {
         Collection<User> users = new HashSet<>();
         for (User user : userRepo.findAll()) {
             users.add(user);
         }
-
-        return new ResponseEntity<Collection>(users, HttpStatus.OK);
+        model.addAttribute("users", users);
+        model.addAttribute("result", result);
+        return model;
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.DELETE)
+    @RequestMapping(value="/deleteuser", method = RequestMethod.GET)
+    public RedirectView deleteUser(@RequestParam(value = "user_id", required = false, defaultValue = "-1") Long user_id, RedirectAttributes attributes) {
+        User needle_user=userRepo.findOne(user_id);
+        userRepo.delete(needle_user);
+        attributes.addAttribute("result", "Корректно удален");
+        //удаляем его из авторов и презентаций
+        for (UserPresentation uspr : usPrRepo.findUserPresentationByUserId(user_id)) {
+                Long pres_id=uspr.getPresentation_id();
+                usPrRepo.delete(uspr);
+            if (usPrRepo.findUserPresentationByPresentationId(pres_id) == null) {
+                presentationRepo.delete(pres_id);
+                Schedule schedule=scheduleRepo.findScheduleByPresentationId(pres_id);
+                scheduleRepo.delete(schedule);
+            }
+
+        }
+
+        return new RedirectView("users");
+
+    }
+
+    @RequestMapping(value="/updateuser", method = RequestMethod.GET)
+    public Model updateUser(@RequestParam(value = "user_id", required = false, defaultValue = "-1") Long user_id, Model model) {
+        User needle_user=userRepo.findOne(user_id);
+        model.addAttribute("user", needle_user);
+        HashSet<String> roleset=new HashSet<>();
+        roleset.add("Admin");
+        roleset.add("Presenter");
+        roleset.add("Listener");
+        model.addAttribute("selection", roleset);
+        model.addAttribute("selector", needle_user.getRole());
+        return  model;
+
+    }
+
+    @RequestMapping(value="/updateuser", method = RequestMethod.POST)
+    public RedirectView updateUserPost(@ModelAttribute User user, Model model,RedirectAttributes attributes) {
+        User needle_user=userRepo.findOne(user.getId());
+        needle_user.setName(user.getName());
+        needle_user.setRole(user.getRole());
+        userRepo.save(needle_user);
+        return new RedirectView("/users");
+
+    }
+    /*@RequestMapping(value = "/users", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteUser(@RequestBody User user) {
         userRepo.delete(user);
         return new ResponseEntity<Object>(userRepo.findAll(), HttpStatus.OK);
@@ -50,7 +95,7 @@ public class MainController {
         needle_user.setPassword(user.getPassword());
         userRepo.save(needle_user);
         return new ResponseEntity<Object>(userRepo.findAll(), HttpStatus.OK);
-    }
+    }*/
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public ResponseEntity<Object> registerUser(User user) {
@@ -115,7 +160,7 @@ public class MainController {
             String authors = "";
             for (UserPresentation uspr2 : usPrRepo.findUserPresentationByPresentationId(uspr.getPresentation_id())) {
                 User author = userRepo.findOne(uspr2.getUser_id());
-                authors += ", " + author.getName();
+                authors += " " + author.getName();
             }
 
             PresentationRest tmpUserPresentation = new PresentationRest();
